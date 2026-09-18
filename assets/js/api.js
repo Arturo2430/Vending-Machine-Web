@@ -10,7 +10,7 @@ window.API = (function () {
 
   var API = {
     base: '',            // vacío = mismo origen (http://192.168.4.1)
-    usarMock: true,      // <-- poner en false cuando el ESP32 sirva las rutas
+    usarMock: false,      // <-- poner en false cuando el ESP32 sirva las rutas
     retardoMock: 260     // ms, para ver los estados de "cargando"
   };
 
