@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Prueba API en mock</title>
+</head>
+<body>
+    <h1>Prueba API en mock</h1>
+    Ver consola
+    <script src="js/mock.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        apiCall("/api/status", "GET").then(data => console.log("status:", data));
+        login("1234").then(data => console.log("login ok:", data));
+        login("0000").catch(e => console.log("login mal:", e));
+        apiCall("/api/slots", "GET").then(data => console.log("slots:", data));
+        apiCall("/api/cards", "GET").then(data => console.log("cards:", data));
+        apiCall("/api/slots/restock", "POST", {slot: 1, added_qty: 5, request_id: "req_rest_001"}).then(data => console.log("restock ok:", data));
+        apiCall("/api/slots/restock", "POST", {slot: 1, added_qty: 5, request_id: "req_rest_001"}).then(data => console.log("restock repetido:", data)).catch(e => console.log("restock repetido error:", e));
+        apiCall("/api/cards/recharge", "POST", {uid: "A1B3", amount: 5000, request_id: "req_rech_001"}).then(data => console.log("recharge ok:", data));
+        apiCall("/api/cards/recharge", "POST", {uid: "XXXX", amount: 5000, request_id: "req_rech_002"}).then(data => console.log("recharge uid malo:", data)).catch(e => console.log("recharge uid malo error:", e));
+        apiCall("/api/reports/transactions?page=1&limit=10", "GET").then(data => console.log("transactions p1:", data));
+        apiCall("/api/reports/transactions?page=3&limit=10", "GET").then(data => console.log("transactions p3:", data));
+        apiCall("/api/backup", "GET").then(data => console.log("backup:", data));
+        apiCall("/api/products", "POST", {name: "Gansito", cost: 1200}).then(data => console.log("products ok:", data));
+    </script>
+</body>
+</html>

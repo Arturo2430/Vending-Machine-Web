@@ -137,7 +137,7 @@ function fetchMock (url, options) {
     }
 
     if (url.includes("/api/backup") && method == "GET") {
-        return Promise.resolve(fakeResponse(200, {}));
+        return Promise.resolve(fakeResponse(200, {}, "application/octet-stream"));
     }
 
     if (url.includes("/api/products") && method == "POST") {
@@ -149,11 +149,14 @@ function fetchMock (url, options) {
     }
 }
 
-function fakeResponse(status, datos) {
+function fakeResponse(status, data, contentType = "application/json") {
     return {
         ok: status >= 200 && status < 300,
         status: status,
-        json: () => Promise.resolve(datos),
+        headers: {
+            get: (nombre) => nombre.toLowerCase() === "content-type" ? contentType : null
+        },
+        json: () => Promise.resolve(data),
         blob: () => Promise.resolve(new Blob(["contenido"]))
     };
 }
