@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    SAID · Tarjetas RFID
    GET  /api/cards
    POST /api/cards/recharge   {uid, amount, request_id}
@@ -14,21 +14,39 @@
 
   function pintar() {
     if (!tarjetas.length) {
-      cuerpo.innerHTML = '<tr><td colspan="5" class="vacio">Todavía no hay tarjetas registradas. ' +
-        'Pasa una tarjeta por el lector del ESP32 para darla de alta.</td></tr>';
+      cuerpo.innerHTML = '<tr><td colspan="5" class="vacio">Todavia no hay tarjetas registradas. Pasa una tarjeta por el lector del ESP32 para darla de alta.</td></tr>';
       return;
     }
     cuerpo.innerHTML = tarjetas.map(function (t) {
+      var btnToggle = t.active 
+        ? '<button class="btn btn--claro btn--chico" style="margin-right:4px;" data-toggle="' + UI.escapar(t.uid) + '" data-active="1">Deshabilitar</button>'
+        : '<button class="btn btn--claro btn--chico" style="margin-right:4px;" data-toggle="' + UI.escapar(t.uid) + '" data-active="0">Habilitar</button>';
+
       return '<tr>' +
         '<td style="font-family:var(--mono)">' + UI.escapar(t.uid) + '</td>' +
-        '<td>' + UI.escapar(t.label || '—') + '</td>' +
+        '<td>' + UI.escapar(t.label || '-') + '</td>' +
         '<td class="num">' + UI.dinero(t.balance) + '</td>' +
         '<td>' + (t.active ? '<span class="etq etq--activa">Activa</span>'
                            : '<span class="etq etq--inactiva">Deshabilitada</span>') + '</td>' +
-        '<td><button class="btn btn--chico" data-recargar="' + UI.escapar(t.uid) + '"' +
+        '<td>' + btnToggle + '<button class="btn btn--chico" data-recargar="' + UI.escapar(t.uid) + '"' +
             (t.active ? '' : ' disabled') + '>Recargar saldo</button></td>' +
       '</tr>';
     }).join('');
+
+    cuerpo.querySelectorAll('[data-toggle]').forEach(function (b) {
+      b.addEventListener('click', async function () {
+        b.disabled = true;
+        var uid = b.dataset.toggle;
+        var isActiva = b.dataset.active === '1';
+        try {
+          await API.llamarApi('/api/cards/toggle', 'POST', { uid: uid, active: !isActiva });
+          cargar();
+        } catch (err) {
+          UI.mostrarError(err);
+          b.disabled = false;
+        }
+      });
+    });
 
     cuerpo.querySelectorAll('[data-recargar]').forEach(function (b) {
       b.addEventListener('click', function () { modalRecarga(b.dataset.recargar); });
@@ -109,3 +127,18 @@
   document.getElementById('btnRecargarLista').addEventListener('click', cargar);
   cargar();
 })();
+
+
+  document.getElementById('btnAgregarTarjeta')?.addEventListener('click', async function () {
+    var uid = document.getElementById('nuevoUid').value.trim();
+    var saldo = Number(document.getElementById('nuevoSaldo').value) * 100;
+    if (!uid) return UI.aviso('error', 'Error', 'Ingresa un UID valido');
+    try {
+      await API.llamarApi('/api/cards', 'POST', { uid: uid, balance: saldo });
+      UI.aviso('ok', 'Exito', 'Tarjeta registrada correctamente');
+      cargar();
+    } catch (err) {
+      UI.mostrarError(err);
+    }
+  });
+

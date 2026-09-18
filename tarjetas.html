@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -28,6 +28,18 @@
     <h1>Tarjetas RFID de demostración</h1>
     <p>Saldos simulados que vive en el ESP32. Una recarga nunca se registra ni se muestra como una venta.</p>
     <div class="subrayado"></div>
+      <article class="hoja" style="margin-top: 1rem;">
+      <h2>Registrar nueva tarjeta</h2>
+      <div class="campo">
+        <label>UID (Ej. A1B2C3D4)</label>
+        <input type="text" id="nuevoUid" placeholder="A1B2C3D4">
+      </div>
+      <div class="campo">
+        <label>Saldo Inicial ($)</label>
+        <input type="number" id="nuevoSaldo" value="0">
+      </div>
+      <button class="btn" id="btnAgregarTarjeta">Registrar Tarjeta</button>
+    </article>
   </section>
 
   <section class="seccion">
@@ -58,7 +70,6 @@
 </footer>
 <div class="cuadros" aria-hidden="true"></div>
 
-<script src="assets/js/mock.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/tarjetas.js"></script>
